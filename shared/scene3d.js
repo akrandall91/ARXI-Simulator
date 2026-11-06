@@ -215,6 +215,44 @@ const Scene3D = (() => {
     return { group: g, target: new T.Vector3(-2.2, 1.5, 1), base: new T.Vector3(-1.4, 1.6, 2.9) };
   }
 
+  // A race finish line: a closed road, the finish arch over a timing mat, barriers with spectators, runners coming in.
+  // The stand is on the right just past the line, facing the finish chute where runners and the crowd gather (two posts).
+  function finishLine() {
+    const g = new T.Group(), housing = opts.finish === 'white' ? M.coatWhite : M.coatBlack;
+    if(!tex.finish) {
+      tex.finish = canvasTex(1024, 192, (c, w, h) => { c.fillStyle = '#12233f'; c.fillRect(0, 0, w, h);
+        for(let x = 0; x < w; x += 32) for(let y = 0; y < 2; y++) { c.fillStyle = ((x / 32 + y) % 2) ? '#ffffff' : '#111111'; c.fillRect(x, y * 16, 32, 16); c.fillRect(x, h - 32 + y * 16, 32, 16); }
+        c.fillStyle = '#ffffff'; c.font = 'bold 104px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('FINISH', w / 2, h / 2 + 4); });
+      tex.mat = canvasTex(256, 64, (c, w, h) => { for(let x = 0; x < w; x += 16) for(let y = 0; y < h; y += 16) { c.fillStyle = ((x + y) / 16 % 2) ? '#e8e8e8' : '#1a1a1a'; c.fillRect(x, y, 16, 16); } }, [6, 1]);
+    }
+    const grassL = new T.Mesh(new T.PlaneGeometry(120, 120), M.grass); grassL.rotation.x = -Math.PI / 2; grassL.receiveShadow = true; g.add(grassL);
+    const road = new T.Mesh(new T.PlaneGeometry(7.4, 80), M.asphalt); road.rotation.x = -Math.PI / 2; road.position.set(0, 0.004, -20); road.receiveShadow = true; g.add(road);
+    const walk = new T.Mesh(new T.PlaneGeometry(4, 80), M.concrete); walk.rotation.x = -Math.PI / 2; walk.position.set(5.9, 0.006, -20); walk.receiveShadow = true; g.add(walk);
+    const mat = new T.Mesh(new T.PlaneGeometry(7.2, 0.9), new T.MeshStandardMaterial({ map: tex.mat, roughness: 0.8 })); mat.rotation.x = -Math.PI / 2; mat.position.set(0, 0.01, 0); g.add(mat);
+    // the arch: two truss legs and a banner beam
+    [-3.9, 3.9].forEach(x => { g.add(box(0.32, 4.2, 0.32, M.steel, x, 2.1, 0)); g.add(box(0.7, 0.12, 0.7, M.pad, x, 0.06, 0)); });
+    g.add(box(8.12, 0.3, 0.34, M.steel, 0, 4.3, 0));
+    const banner = new T.Mesh(new T.PlaneGeometry(7.4, 1.38), new T.MeshStandardMaterial({ map: tex.finish, roughness: 0.7, side: T.DoubleSide })); banner.position.set(0, 3.55, 0.18); g.add(banner);
+    const bannerB = banner.clone(); bannerB.position.z = -0.18; bannerB.rotation.y = Math.PI; g.add(bannerB);
+    // barriers both sides of the road, with spectators behind them
+    for(let z = -26; z <= 7; z += 2.1) for(const x of [-3.85, 3.85]) { if(Math.abs(z) < 1.2) continue;
+      const bar = new T.Group(); bar.add(box(0.04, 1.0, 2.0, M.galv, 0, 0.6, 0)); bar.add(box(0.03, 0.03, 2.0, M.galv, 0, 1.08, 0), box(0.03, 0.03, 2.0, M.galv, 0, 0.18, 0));
+      for(let k = -0.9; k <= 0.9; k += 0.15) bar.add(box(0.015, 0.9, 0.015, M.galv, 0, 0.62, k)); bar.position.set(x, 0, z); g.add(bar); }
+    const cols = [0xc0392b, 0x2e86de, 0xf1c40f, 0x27ae60, 0x8e44ad, 0xe67e22, 0x16a085, 0x34495e];
+    for(let i = 0; i < 22; i++) { const z = -24 + i * 1.45 + rnd() * 0.6; const side = i % 2 ? -1 : 1; if(Math.abs(z) < 1.4 || (side > 0 && z > 3.4 && z < 6.6)) continue;
+      g.add(person(side * (4.45 + rnd() * 0.5), z, side > 0 ? -Math.PI / 2 : Math.PI / 2, cols[i % cols.length])); }
+    // runners on the course, the leader just crossing the mat
+    [[-0.6, -0.3], [1.1, -3.6], [-1.4, -6.2], [0.4, -9.5], [-0.9, -13], [1.6, -16.4], [-0.2, -21]].forEach(([x, z], i) => g.add(person(x, z, 0, cols[(i + 3) % cols.length])));
+    // the ARXI stand: two posts past the arch on the right, angled to the finish
+    const K = new T.Group(); K.position.set(4.6, 0, 5.0); K.rotation.y = -0.35; g.add(K);
+    const span = 0.44, postH = 2.0;
+    [-span / 2, span / 2].forEach(x => { K.add(box(0.05, postH, 0.05, housing, x, postH / 2, 0)); K.add(box(0.3, 0.03, 0.42, M.steel, x, 0.015, 0)); K.add(box(0.065, 0.015, 0.065, housing, x, postH + 0.008, 0)); });
+    if(opts.room !== 2 && !alt('bar', g, housing, { K })) { const bar = cabinet(texBar, 0.300, 0.075, 0.04, housing, 0.330, 0.076); const y = opts.room === 1 ? 1.62 : 1.74; bar.position.set(0, y, 0.025); K.add(bar); K.add(box(span, 0.03, 0.03, housing, 0, y, 0)); }
+    if(opts.room !== 1 && !alt('pan', g, housing, { K })) { const pan = cabinet(texPan, 0.320, 0.160, 0.045, housing, 0.330, 0.178); const y = opts.room === 2 ? 1.55 : 1.48; pan.position.set(0, y, 0.025); K.add(pan); K.add(box(span, 0.03, 0.03, housing, 0, y, 0)); }
+    [[-12, -30, 1.4], [-9, -18, 1.2], [11, -26, 1.5], [12, -12, 1.3], [-13, -6, 1.3], [14, 2, 1.2], [-12, 8, 1.4]].forEach(([x, z, sc]) => g.add(tree(x, z, sc)));
+    g.add(streetLamp(8.2, -6, -1));
+    return { group: g, target: new T.Vector3(4.4, 1.7, 5.0), base: new T.Vector3(2.5, 1.7, 8.4) };
+  }
 
   // ---------------------------------------------------------------- indoors: a real room, window light, lamps, screen glow
   const rbox = (w, h, d, r, m, x = 0, y = 0, z = 0) => { const o = new T.Mesh(new RBox(w, h, d, 4, Math.min(r, w / 2, h / 2, d / 2)), m); o.position.set(x, y, z); o.castShadow = o.receiveShadow = true; return o; };
@@ -513,7 +551,7 @@ const Scene3D = (() => {
     const sg = new T.BufferGeometry(), sp = new Float32Array(900); for(let i = 0; i < 300; i++) { const v = new T.Vector3().setFromSphericalCoords(300, Math.acos(rnd() * 0.9), rnd() * Math.PI * 2); sp.set([v.x, Math.abs(v.y), v.z], i * 3); } sg.setAttribute('position', new T.BufferAttribute(sp, 3));
     stars = new T.Points(sg, new T.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, fog: false })); scene.add(stars);
     rain = particles(2600, new T.LineBasicMaterial({ color: 0xaab7c6, transparent: true, opacity: 0.45 }), true); snow = particles(2200, new T.PointsMaterial({ color: 0xffffff, size: 0.05, transparent: true, opacity: 0.9 }), false); scene.add(rain, snow);
-    rig = p === 'park' ? parkKiosk() : p === 'living' ? livingRoom() : p === 'bedroom' ? bedroom() : p === 'pub' ? pubScene() : p === 'cafe' ? cafeScene() : p === 'yard' ? backyard() : p === 'cave' ? manCave() : busStop(); scene.add(rig.group); envKey = ''; M.facadeA.userData.lit = undefined; applyLight(); if(D) { D.g = null; demoBuild(); }
+    rig = p === 'park' ? parkKiosk() : p === 'finish' ? finishLine() : p === 'living' ? livingRoom() : p === 'bedroom' ? bedroom() : p === 'pub' ? pubScene() : p === 'cafe' ? cafeScene() : p === 'yard' ? backyard() : p === 'cave' ? manCave() : busStop(); scene.add(rig.group); envKey = ''; M.facadeA.userData.lit = undefined; applyLight(); if(D) { D.g = null; demoBuild(); }
     if(opts.barSpot || opts.panSpot) { const pts = []; rig.group.updateMatrixWorld(true); rig.group.traverse(o => { if(o.userData.led) pts.push(o.getWorldPosition(new T.Vector3())); }); if(pts.length) { const c = pts.reduce((a, b) => a.clone().add(b), new T.Vector3()).multiplyScalar(1 / pts.length), off = rig.base.clone().sub(rig.target);
       let spread = 0; pts.forEach(a => pts.forEach(b => spread = Math.max(spread, a.distanceTo(b)))); // screens far apart: step back so both are in view
       off.multiplyScalar(Math.min(2.2, Math.max(1, spread / 1.1))); rig.target.copy(c); rig.base.copy(c).add(off); rig.base.y = place === 'busstop' ? 1.62 : Math.max(rig.base.y, c.y + 0.35, 1.45); } } // at a stop the view is a rider's eye level

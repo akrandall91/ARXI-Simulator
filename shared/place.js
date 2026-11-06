@@ -54,7 +54,7 @@ function skyColours(L, wx) {
 function placeUpdate(force) {
   const stage = document.querySelector('.stage'); if(!stage || !S.work) return;
   const L = daylight(), wx = S.work.set.WX_ON === 0 ? 0 : (S.work.set.WX_CODE ?? 2), roomLight = S.work.set.ROOM_LIGHT ?? 60, dark = !!S.work.set.ROOM_DARK;
-  const is3d = ['busstop', 'park', 'living', 'bedroom', 'pub', 'cafe', 'cave', 'yard'].includes(P.place) && typeof Scene3D !== 'undefined' && !Scene3D.failed;
+  const is3d = ['busstop', 'park', 'finish', 'living', 'bedroom', 'pub', 'cafe', 'cave', 'yard'].includes(P.place) && typeof Scene3D !== 'undefined' && !Scene3D.failed;
   const key = [P.place, P.dist, Math.round(L.h * 6), wx, roomLight, dark, S.room, S.finish, JSON.stringify(store.get('spot:' + P.place, [0, 0]))].join('|');
   if(!force && key === P.key) return; P.key = key;
   stage.classList.toggle('is3d', is3d);
@@ -75,7 +75,7 @@ function placeUpdate(force) {
   }
   if(typeof Scene3D !== 'undefined') Scene3D.hide();
   stage.dataset.place = P.place; stage.style.setProperty('--dist', P.dist);
-  const outdoor = ['busstop', 'park', 'store', 'yard'].includes(P.place);
+  const outdoor = ['busstop', 'park', 'finish', 'store', 'yard'].includes(P.place);
   // how washed out the LEDs look: full sun outdoors makes them hard to read, a bright room a little
   const ambient = P.place === 'bench' ? 0 : outdoor ? L.sun * (wx >= 3 ? 0.6 : 1) * (P.place === 'store' ? 0.75 : 1) : Math.min(1, (dark ? 0 : roomLight / 100) * 0.35 + L.sun * 0.25);
   stage.style.setProperty('--wash', ambient.toFixed(2));
@@ -125,7 +125,7 @@ function sceneSvg(place, L, wx, roomLight, dark) {
     <rect x="72" y="60" width="150" height="400" fill="${mixHex('#0d1a24', '#a8d4ec', dim)}" opacity=".18"/><rect x="778" y="60" width="150" height="400" fill="${mixHex('#0d1a24', '#a8d4ec', dim)}" opacity=".18"/>
     <rect x="300" y="430" width="400" height="14" rx="4" fill="${metal}"/><rect x="320" y="444" width="10" height="28" fill="${metal}"/><rect x="670" y="444" width="10" height="28" fill="${metal}"/>
     ${person(160, 1.1)}${person(860, 1)}<rect width="1000" height="600" fill="url(#shade)"/>`);
-  if(place === 'park') return wrap(`<rect width="1000" height="600" fill="url(#sky)"/>${stars}${sun}
+  if(place === 'park' || place === 'finish') return wrap(`<rect width="1000" height="600" fill="url(#sky)"/>${stars}${sun}
     ${[60, 200, 760, 900].map((x, i) => `<g transform="translate(${x} ${300 + i % 2 * 20})"><rect x="-8" y="60" width="16" height="110" fill="${mixHex('#090605', '#5a3e28', dim)}"/><circle cx="0" cy="30" r="${70 - i % 2 * 12}" fill="${mixHex('#050a06', '#3f8a46', dim)}"/></g>`).join('')}
     <path d="M0 470q250-40 500 0t500 0v130H0z" fill="${mixHex('#060a06', '#5f9d4a', dim)}"/><path d="M380 600l70-140h100l70 140z" fill="${mixHex('#0b0b0a', '#c9b48e', dim)}"/>
     <path d="M150 60h700l-40-40H190z" fill="${mixHex('#1a0d08', '#8a4b2a', dim)}"/><rect x="170" y="60" width="16" height="420" fill="${metal}"/><rect x="814" y="60" width="16" height="420" fill="${metal}"/>

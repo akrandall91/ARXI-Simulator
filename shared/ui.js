@@ -205,7 +205,7 @@ function barWhat(r) {
 function nowLine() {
   const r = S.last; if(!r) return '';
   if(r.error) return `<span class="tag">Error</span> ${r.error.replace(/</g, '&lt;')}`;
-  if(r.concept) return `<span class="tag">Concept</span> ${S.app.name} · ${S.sit.name}`;
+  if(r.concept) return `<span class="tag kind">Concept</span> ${S.app.name} · ${S.sit.name}`;
   const A = S.engines[0]; const art = r.view === 3 && r.art >= 0 ? ' · ' + A.artName(r.art) : '';
   const room = ['', ' · Bar alone', ' · companion alone', ' · swapped'][S.room];
   return `${wallTime()}${room} &nbsp; <span class="tag">Bar</span> ${barWhat(r)} &nbsp; <span class="tag">Panel</span> ${A.viewName(r.view)}${art}`;

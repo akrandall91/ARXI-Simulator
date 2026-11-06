@@ -1,0 +1,20 @@
+/* ARXI Commercial: buyer-facing polish on top of shared/arxi.css */
+
+/* Build mode is what a business sees: no lab labels, no firmware build names */
+body[data-mode="build"] #buildTag, body[data-mode="build"] .tagline, body[data-mode="build"] .now .kind { display: none }
+
+/* The Lab switch only shows once unlocked with ?lab (see the end of features.js) */
+body:not([data-lab]) .modeseg { display: none !important }
+
+/* Steadier type in the wizard: card titles, the lead line and the quote form */
+.wtitle h2 { letter-spacing: -.01em }
+.wcard .wtx b { letter-spacing: -.005em }
+.wlead { text-wrap: pretty }
+.wquote h3 { letter-spacing: -.01em }
+
+/* The step dots read as a progress bar rather than buttons */
+.wsteps { gap: 4px }
+.wdot { height: 6px; padding: 0; font-size: 0; border-radius: 99px; border: 0; background: var(--line) }
+.wdot.done { background: var(--ok) }
+.wdot.on { background: var(--accent) }
+.wdot span { display: none }

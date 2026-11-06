@@ -56,6 +56,7 @@ ARXI.feature = function(app) {
     if(app.starter && STARTERS[p] && !STARTERS[p].includes(a.id)) STARTERS[p].push(a.id);
   }
   if(app.pack) { const pk = PACKS.find(x => x.id === app.pack); if(pk && pk.apps && !pk.apps.includes(a.id)) pk.apps.push(a.id); }
+  if(app.places) a.onlyPlaces = [...app.places]; // offered only in these places, even when its group shows elsewhere
   delete a.places; delete a.starter; delete a.pack;
   return ARXI.registerApp(a);
 };

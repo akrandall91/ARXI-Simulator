@@ -236,31 +236,7 @@ CO('Parks', 'pool', 'Pool & Splash Pad', 'paid', 'quote', 'Parks & recreation', 
 CO('Parks', 'courts', 'Court Queue', 'paid', 'quote', 'Parks & recreation', 'Who is up next on the pickleball and tennis courts.', [
   S1('Pickleball', 'Next group and wait.', (g, t) => { const n = 4 + Math.floor(t / 7000); card(g, `COURT ${1 + n % 4}`, `#${n}`, 0xc8f000, C.white); }, 2000)]);
 
-// ===== Commercial
-CO('Commercial', 'open-sign', 'Open Sign', 'paid', '$5/mo', 'Local businesses', 'OPEN with today\'s hours, readable from the street.', [
-  S1('Open', 'Slow glow.', (g, t) => { const col = g.scale(0xff3060, 0.75 + 0.25 * pulse(t, 2600)); g.clear(0); if(wide(g)) { g.text5('OPEN', 1, 2, col); g.text3('7-9', 43 - g.w3('7-9'), 3, C.white); } else { g.c5('OPEN', 2, col); g.c3('7AM-9PM', 10, C.white); } }),
-  S1('Closed', 'Closed with opening time.', (g, t) => card(g, 'OPENS 7AM', 'CLOSED', 0x8090a0, 0x804050))]);
-CO('Commercial', 'now-serving', 'Now Serving', 'paid', '$5/mo', 'Local businesses', 'The queue number, with a flash when it moves.', [
-  S1('Queue', 'A47, A48 ...', (g, t) => { const n = 47 + Math.floor(t / 6000); card(g, 'NOW SERVING', 'A' + n, C.amber, C.white, t % 6000 < 400 ? 0x203000 : 0); }, 6200, 30000)]);
-CO('Commercial', 'order-ready', 'Order Ready', 'paid', '$5/mo', 'Local businesses', 'Pickup numbers that are ready at the counter.', [
-  S1('Ready for pickup', 'Numbers ready.', (g, t) => banner(g, 'READY', `ORDERS 112  115  ${117 + Math.floor(t / 8000)}`, C.green, C.white, t))]);
-CO('Commercial', 'specials', 'Specials', 'paid', '$5/mo', 'Local businesses', 'Rotating specials with prices.', [
-  S1('Coffee menu', 'Three items rotating.', (g, t) => { const it = [['LATTE', '$3.50', 0xc89060], ['CROISSANT', '$2.75', 0xf0c060], ['COLD BREW', '$4.25', 0x60a0ff]][Math.floor(t / 4000) % 3]; g.clear(0);
-    if(wide(g)) { g.marquee3(it[0], 0, it[2], t % 4000, 20, true); g.text3(it[1], 43 - g.w3(it[1]), 6, C.white); } else { g.c3(it[0], 2, it[2]); g.c5(it[1], 8, C.white); } }, 2000, 24000)]);
-CO('Commercial', 'happy-hour', 'Happy Hour', 'paid', '$5/mo', 'Local businesses', 'Countdown to happy hour, then the deal.', [
-  S1('Countdown', 'Minutes to happy hour.', (g, t) => { const s = Math.max(0, 900 - t / 1000 * 40); card(g, s ? 'HAPPY HR IN' : 'HAPPY HOUR', s ? mmss(s) : '$2 OFF', 0xff7ac8, C.white, 0x100010); }, 6000, 30000)]);
-CO('Commercial', 'wait', 'Wait Time', 'paid', '$5/mo', 'Local businesses', 'Estimated wait, coloured by length.', [
-  S1('Wait', 'Minutes of wait.', (g, t) => { const m = 8 + Math.round(6 * pulse(t, 20000)); card(g, 'WAIT', `${m}M`, C.white, m < 10 ? C.green : m < 13 ? C.amber : C.red); }, 3000)]);
-CO('Commercial', 'occupancy', 'Occupancy', 'paid', '$5/mo', 'Local businesses', 'People inside versus the limit, from a door counter.', [
-  S1('Room count', 'Count rising to the limit.', (g, t) => { const n = Math.min(50, 38 + Math.floor(t / 1500)); g.clear(0); g.text3(`${n}/50`, 1, 0, C.white); const k = n / 50; g.rect(0, g.h - 4, g.w - 1, g.h - 1, 0x1a1a1a); g.rect(0, g.h - 4, Math.round((g.w - 1) * k), g.h - 1, k < 0.85 ? C.green : k < 1 ? C.amber : C.red); }, 12000)]);
-CO('Commercial', 'social', 'Follow Us', 'free', '', 'Local businesses', 'Your social handle and a scan-to-review prompt.', [
-  S1('Instagram', 'Handle scrolling.', (g, t) => banner(g, 'FOLLOW US', '@ARXISYSTEMS ON INSTAGRAM AND TIKTOK', g.hsv(220 + 30 * pulse(t, 3000), 200, 255), C.white, t))]);
-
-// ===== Funeral homes
-CO('Funeral Homes', 'service', 'Service Schedule', 'paid', 'quote', 'Funeral homes', 'Today\'s services by room and time, in a calm white.', [
-  S1('Today', 'Room and time, slow fade.', (g, t) => { const k = 0.7 + 0.3 * pulse(t, 6000), col = g.scale(0xf0ece4, k); banner(g, 'CHAPEL A 11AM', 'VISITATION 10AM  -  SERVICE 11AM  -  RECEPTION TO FOLLOW', col, g.scale(0xc8c0b0, k), t, 0); }, 4000)]);
-CO('Funeral Homes', 'welcome', 'Welcome', 'paid', 'quote', 'Funeral homes', 'A quiet welcome with directions for guests.', [
-  S1('Welcome', 'Directions for guests.', (g, t) => banner(g, 'WELCOME', 'GUESTS FOR THE 2PM SERVICE PLEASE USE THE EAST DOOR', 0xe8e0d0, 0xb0a890, t))]);
+// ===== Commercial and Funeral homes: moved to commercial/features.js (they only ship in the Commercial section)
 
 // ===== Streamer
 CO('Streamer', 'on-air', 'On Air', 'paid', '$4/mo', 'Creators', 'A red ON AIR light that breathes.', [

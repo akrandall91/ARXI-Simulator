@@ -62,7 +62,7 @@ const STEPS = ['Who it\'s for', 'Where it goes', 'Your ARXI', 'Senses', 'Packs',
 const wSave = () => store.set('wizard', { step: W.step, b: W.b });
 
 function placeAllowed(place) { if(!place || place === 'bench') return null; const g = PLACE_GROUPS[place]; return g ? { groups: g, not: NOT_FOR_PLACE[place] || [] } : null; }
-function appForPlace(app, place) { const r = placeAllowed(place); if(!r) return true; const need = NEEDS[app.id]; if(need && !sensesFor(place).includes(need)) return false; return app.group !== 'Diagnostics' && r.groups.includes(app.group) && !r.not.includes(app.id); }
+function appForPlace(app, place) { const r = placeAllowed(place); if(!r) return true; if(app.onlyPlaces && !app.onlyPlaces.includes(place)) return false; const need = NEEDS[app.id]; if(need && !sensesFor(place).includes(need)) return false; return app.group !== 'Diagnostics' && r.groups.includes(app.group) && !r.not.includes(app.id); }
 function sensesFor(place) { return Object.entries(SENSES).filter(([, s]) => s.places === 'all' || s.places.includes(place)).map(([k]) => k); }
 function buyerOfPlace(place) { return Object.keys(BUYERS).find(k => BUYERS[k].places.includes(place)); }
 function placeName(id) { const p = PLACES.find(x => x.id === id); return p ? p.name : id; }
@@ -99,7 +99,7 @@ function wPreview(appId) { // show one feature on the screens, looping
 }
 function wPlayAll() {
   const b = W.b; if(!b.features.length) return toast('Pick at least one feature');
-  M.model = { name: b.name || `${placeName(b.place)} ARXI`, market: BUYERS[b.buyer].market, screens: b.screens === 'both' ? ['bar', 'panel'] : [b.screens], power: ['busstop', 'park'].includes(b.place) ? 'Solar + battery' : 'Wall', features: [...b.features] };
+  M.model = { name: b.name || `${placeName(b.place)} ARXI`, market: BUYERS[b.buyer].market, screens: b.screens === 'both' ? ['bar', 'panel'] : [b.screens], power: ['busstop', 'park'].includes(b.place) ? 'Solar + battery' : b.place === 'finish' ? 'Battery (event)' : 'Wall', features: [...b.features] };
   reelStart();
 }
 

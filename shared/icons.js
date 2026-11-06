@@ -9,6 +9,7 @@ const ICON_PATHS = {
   wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
   arrowleft: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
   arrowright: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  flag: '<path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/>',
   bus: '<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M7 21v-3M17 21v-3"/><circle cx="8" cy="14.5" r=".8"/><circle cx="16" cy="14.5" r=".8"/>',
   tree: '<path d="M12 2l6 9h-3l4 6H5l4-6H6zM12 17v5"/>',
   store: '<path d="M3 9l1.5-5h15L21 9M4 9v11h16V9M3 9h18M9 20v-6h6v6"/>',
