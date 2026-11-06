@@ -19,6 +19,7 @@ shared/                 The simulator every section runs on
   firmware.js           ARXIv2 builds (WebAssembly, base64)
   apps.js               Shared app library (clock, weather, seasons…)
   segment.js            Locks a page to its section; defines ARXI.feature()
+  kit.js                Layout kit for concept apps, extra glyphs ($ # @ &), room-profile engine
   wizard.js, lab.js, tiers.js, place.js, scene3d.js, ui.js, …
   arxi.css
 ```

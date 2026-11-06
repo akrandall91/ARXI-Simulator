@@ -454,6 +454,42 @@ const Scene3D = (() => {
     if(opts.room !== 1 && !alt('pan', g, housing)) standPanel(g, 0.4, 0.895, 0.05, housing, 0);
     return { group: g, target: new T.Vector3(0.2, 1.4, -0.6), base: new T.Vector3(0.6, 1.6, 3.4) };
   }
+  function deskScene() { // a desk setup: a wide desk against the wall, a monitor, keyboard, a chair, a shelf with books and a plant; the Bar on the wall above the monitor, the Panel on the desk
+    roomTextures(); glows.length = 0; const housing = opts.finish === 'white' ? M.coatWhite : M.coatBlack;
+    const g = roomShell(0x3d4652, new T.MeshStandardMaterial({ color: 0x6b5644, map: tex.planks, roughness: 0.7 }));
+    const oak = new T.MeshStandardMaterial({ color: 0xb08a64, map: tex.planks, roughness: 0.45 }), black = new T.MeshStandardMaterial({ color: 0x15161a, roughness: 0.5, metalness: 0.3 });
+    // desk: 1.6 m top on two panel legs
+    g.add(rbox(1.6, 0.035, 0.7, 0.01, oak, 0, 0.74, 0.4));
+    [-0.76, 0.76].forEach(x => g.add(box(0.04, 0.72, 0.62, black, x, 0.36, 0.4)));
+    // monitor on a stand, with a desktop on it
+    const screen = canvasTex(512, 300, (c, w, h) => { const gr = c.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#1b2a44'); gr.addColorStop(1, '#3a2148'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
+      c.fillStyle = 'rgba(255,255,255,.88)'; c.fillRect(40, 40, 260, 170); c.fillStyle = '#2c6be0'; c.fillRect(40, 40, 260, 18); c.fillStyle = 'rgba(30,30,40,.5)'; for(let i = 0; i < 6; i++) c.fillRect(56, 76 + i * 20, 120 + (i * 37) % 100, 7);
+      c.fillStyle = 'rgba(255,255,255,.85)'; c.fillRect(330, 70, 140, 110); c.fillStyle = '#e0702c'; c.fillRect(342, 82, 116, 60); c.fillStyle = 'rgba(0,0,0,.55)'; c.fillRect(0, h - 22, w, 22); });
+    g.add(rbox(0.66, 0.4, 0.03, 0.008, black, 0, 1.12, 0.18));
+    const disp = new T.Mesh(new T.PlaneGeometry(0.62, 0.36), new T.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: screen, emissiveIntensity: 0.8, roughness: 0.3 })); disp.position.set(0, 1.12, 0.197); g.add(disp);
+    g.add(box(0.05, 0.22, 0.03, black, 0, 0.87, 0.15), box(0.24, 0.012, 0.16, black, 0, 0.763, 0.17));
+    // keyboard, mouse, mug, headphones on a hook
+    g.add(rbox(0.44, 0.02, 0.14, 0.006, black, -0.02, 0.77, 0.5), rbox(0.06, 0.02, 0.1, 0.01, black, 0.32, 0.77, 0.5));
+    g.add(cyl(0.04, 0.09, new T.MeshStandardMaterial({ color: 0xe8e2d6, roughness: 0.4 }), -0.52, 0.8, 0.55, 20));
+    const phones = new T.Mesh(new T.TorusGeometry(0.08, 0.014, 8, 24, Math.PI), black); phones.position.set(-0.78, 0.66, 0.6); phones.rotation.y = Math.PI / 2; g.add(phones);
+    // chair
+    const chair = new T.Group(), fab = new T.MeshStandardMaterial({ color: 0x23262c, roughness: 0.9 });
+    chair.add(rbox(0.5, 0.08, 0.5, 0.03, fab, 0, 0.48, 0), rbox(0.48, 0.62, 0.07, 0.03, fab, 0, 0.86, 0.24), cyl(0.025, 0.4, M.steel, 0, 0.25, 0, 12), cyl(0.3, 0.02, black, 0, 0.05, 0, 5));
+    chair.position.set(-0.55, 0, 1.25); chair.rotation.y = -0.5; g.add(chair);
+    // wall shelf with books and a plant, a desk lamp
+    g.add(rbox(0.7, 0.025, 0.18, 0.005, oak, -0.95, 1.62, 0.1));
+    [0x8a3a2a, 0x2a4a8a, 0xd9b44a, 0x3a7a4a, 0x6a4a8a].forEach((col, i) => g.add(box(0.035, 0.2 - (i % 3) * 0.02, 0.15, new T.MeshStandardMaterial({ color: col, roughness: 0.7 }), -1.22 + i * 0.045, 1.73 - (i % 3) * 0.01, 0.1)));
+    const pot = cyl(0.06, 0.1, new T.MeshStandardMaterial({ color: 0xd8d2c6, roughness: 0.6 }), -0.75, 1.68, 0.1, 16); g.add(pot);
+    for(let i = 0; i < 7; i++) { const leaf = new T.Mesh(new T.SphereGeometry(0.05, 10, 8), M.canopy); leaf.scale.set(0.7, 1.4, 0.7); leaf.position.set(-0.75 + Math.cos(i) * 0.05, 1.79 + (i % 3) * 0.03, 0.1 + Math.sin(i) * 0.05); g.add(leaf); }
+    const lamp = new T.Group(); lamp.add(cyl(0.07, 0.015, black, 0, 0.765, 0, 20), cyl(0.008, 0.38, black, 0, 0.95, 0, 8)); const shade = new T.Mesh(new T.ConeGeometry(0.08, 0.1, 20, 1, true), black); shade.position.set(0.06, 1.13, 0); shade.rotation.z = 0.9; lamp.add(shade);
+    const lampL = new T.PointLight(0xffd9a0, 0.9, 2.5, 2); lampL.position.set(0.1, 1.08, 0.02); lamp.add(lampL); lamp.position.set(0.66, 0, 0.3); g.add(lamp);
+    const monL = new T.PointLight(0x6a7aff, 0.6, 2.2, 2); monL.position.set(0, 1.12, 0.5); g.add(monL);
+    floorLamp(g, -2.55, 4.4);
+    // the Bar on the wall above the monitor, the Panel on the desk beside it
+    if(opts.room !== 2 && !alt('bar', g, housing)) placeAt(g, 'bar', { t: 'wall', x: 0, y: 1.5, z: 0 }, housing);
+    if(opts.room !== 1 && !alt('pan', g, housing)) standPanel(g, opts.room === 2 ? 0 : -0.5, 0.758, 0.32, housing, 0.2);
+    return { group: g, target: new T.Vector3(-0.1, 1.12, 0.3), base: new T.Vector3(0.55, 1.42, 2.05), indoor: true, mood: 'desk' };
+  }
   function manCave() { // a basement den: dark slate walls, a sectional, a big TV, neon sign, a mini fridge and a dartboard
     roomTextures(); glows.length = 0; const housing = opts.finish === 'white' ? M.coatWhite : M.coatBlack;
     const g = roomShell(0x2f3439, new T.MeshStandardMaterial({ color: 0x3a3c40, map: tex.rug, roughness: 0.95 }));
@@ -551,7 +587,7 @@ const Scene3D = (() => {
     const sg = new T.BufferGeometry(), sp = new Float32Array(900); for(let i = 0; i < 300; i++) { const v = new T.Vector3().setFromSphericalCoords(300, Math.acos(rnd() * 0.9), rnd() * Math.PI * 2); sp.set([v.x, Math.abs(v.y), v.z], i * 3); } sg.setAttribute('position', new T.BufferAttribute(sp, 3));
     stars = new T.Points(sg, new T.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, fog: false })); scene.add(stars);
     rain = particles(2600, new T.LineBasicMaterial({ color: 0xaab7c6, transparent: true, opacity: 0.45 }), true); snow = particles(2200, new T.PointsMaterial({ color: 0xffffff, size: 0.05, transparent: true, opacity: 0.9 }), false); scene.add(rain, snow);
-    rig = p === 'park' ? parkKiosk() : p === 'finish' ? finishLine() : p === 'living' ? livingRoom() : p === 'bedroom' ? bedroom() : p === 'pub' ? pubScene() : p === 'cafe' ? cafeScene() : p === 'yard' ? backyard() : p === 'cave' ? manCave() : busStop(); scene.add(rig.group); envKey = ''; M.facadeA.userData.lit = undefined; applyLight(); if(D) { D.g = null; demoBuild(); }
+    rig = p === 'park' ? parkKiosk() : p === 'finish' ? finishLine() : p === 'living' ? livingRoom() : p === 'bedroom' ? bedroom() : p === 'pub' ? pubScene() : p === 'cafe' ? cafeScene() : p === 'yard' ? backyard() : p === 'cave' ? manCave() : p === 'desk' ? deskScene() : busStop(); scene.add(rig.group); envKey = ''; M.facadeA.userData.lit = undefined; applyLight(); if(D) { D.g = null; demoBuild(); }
     if(opts.barSpot || opts.panSpot) { const pts = []; rig.group.updateMatrixWorld(true); rig.group.traverse(o => { if(o.userData.led) pts.push(o.getWorldPosition(new T.Vector3())); }); if(pts.length) { const c = pts.reduce((a, b) => a.clone().add(b), new T.Vector3()).multiplyScalar(1 / pts.length), off = rig.base.clone().sub(rig.target);
       let spread = 0; pts.forEach(a => pts.forEach(b => spread = Math.max(spread, a.distanceTo(b)))); // screens far apart: step back so both are in view
       off.multiplyScalar(Math.min(2.2, Math.max(1, spread / 1.1))); rig.target.copy(c); rig.base.copy(c).add(off); rig.base.y = place === 'busstop' ? 1.62 : Math.max(rig.base.y, c.y + 0.35, 1.45); } } // at a stop the view is a rider's eye level

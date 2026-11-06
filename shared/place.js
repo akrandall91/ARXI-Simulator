@@ -54,7 +54,7 @@ function skyColours(L, wx) {
 function placeUpdate(force) {
   const stage = document.querySelector('.stage'); if(!stage || !S.work) return;
   const L = daylight(), wx = S.work.set.WX_ON === 0 ? 0 : (S.work.set.WX_CODE ?? 2), roomLight = S.work.set.ROOM_LIGHT ?? 60, dark = !!S.work.set.ROOM_DARK;
-  const is3d = ['busstop', 'park', 'finish', 'living', 'bedroom', 'pub', 'cafe', 'cave', 'yard'].includes(P.place) && typeof Scene3D !== 'undefined' && !Scene3D.failed;
+  const is3d = ['busstop', 'park', 'finish', 'living', 'bedroom', 'pub', 'cafe', 'cave', 'yard', 'desk'].includes(P.place) && typeof Scene3D !== 'undefined' && !Scene3D.failed;
   const key = [P.place, P.dist, Math.round(L.h * 6), wx, roomLight, dark, S.room, S.finish, JSON.stringify(store.get('spot:' + P.place, [0, 0]))].join('|');
   if(!force && key === P.key) return; P.key = key;
   stage.classList.toggle('is3d', is3d);
@@ -69,7 +69,7 @@ function placeUpdate(force) {
     const o = { hour: L.h, wx, dist: P.dist, room: S.room, finish: S.finish, roomLight, dark, barSpot: spots ? +$('barSpotSel').value : 0, panSpot: spots ? +$('panSpotSel').value : 0 };
     Scene3D.show(P.place, o, stage).then(ok => { if(!ok) { stage.classList.remove('is3d'); P.key = ''; placeUpdate(true); } else Scene3D.update(o); });
     $('sceneBg').innerHTML = ''; $('sceneFx').className = ''; stage.dataset.place = P.place; stage.style.setProperty('--wash', 0);
-    const indoor = ['living', 'bedroom', 'pub', 'cafe', 'cave'].includes(P.place), lbl = $('placeNote'), note = placeNote(L, indoor ? Math.min(1, (dark ? 0 : roomLight / 100) * 0.35 + L.sun * 0.25) : outdoorWash(L, wx), !indoor) + ' · drag to look around';
+    const indoor = ['living', 'bedroom', 'pub', 'cafe', 'cave', 'desk'].includes(P.place), lbl = $('placeNote'), note = placeNote(L, indoor ? Math.min(1, (dark ? 0 : roomLight / 100) * 0.35 + L.sun * 0.25) : outdoorWash(L, wx), !indoor) + ' · drag to look around';
     if(lbl) lbl.textContent = note; else stage.querySelector('.placebar').append(el('span', { id: 'placeNote', class: 'pnote', text: note }));
     return;
   }
@@ -98,7 +98,7 @@ function sceneSvg(place, L, wx, roomLight, dark) {
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky.top}"/><stop offset="1" stop-color="${sky.bot}"/></linearGradient>
     <radialGradient id="lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".55"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></radialGradient>
     <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient></defs>${body}</svg>`;
-  if(place === 'living' || place === 'bedroom') {
+  if(place === 'living' || place === 'bedroom' || place === 'desk') {
     const lit = dark ? 0.08 : Math.max(L.sun * 0.55, roomLight / 100 * 0.8, 0.12), lampOn = !dark && L.sun < 0.4;
     const wall = mixHex('#14161b', place === 'living' ? '#d9cfc0' : '#b9c4cf', lit), floor = mixHex('#0d0e10', '#8a6a4a', lit), wood = mixHex('#120d09', '#6b4a2e', lit), fabric = mixHex('#0c0d10', place === 'living' ? '#4f6b7a' : '#7a5f6b', lit);
     const win = `<rect x="745" y="70" width="190" height="230" rx="6" fill="url(#sky)"/><path d="M840 70v230M745 185h190" stroke="${mixHex('#222222', '#f4efe6', lit)}" stroke-width="8"/><rect x="745" y="70" width="190" height="230" rx="6" fill="none" stroke="${mixHex('#222222', '#f4efe6', lit)}" stroke-width="10"/>
