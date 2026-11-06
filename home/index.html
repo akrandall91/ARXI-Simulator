@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ARXI Home · Simulator</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Silkscreen&display=swap">
+<link rel="stylesheet" href="../shared/arxi.css">
+<script>window.ARXI_SEGMENT = 'home';</script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark"><span id="eelMark"></span>ARXI<small id="buildTag">simulator</small><small class="tagline">light from current</small></div>
+    <span class="spacer"></span>
+    <label class="hsel" for="buildSel"><span data-ic="layers">Build</span><select id="buildSel"></select></label>
+    <label class="hsel" for="roomSel"><span data-ic="screens">Room</span><select id="roomSel"><option value="0">Bar + companion</option><option value="1">Bar alone</option><option value="2">Companion alone</option><option value="3">Swapped: companion leads</option></select></label>
+    <button id="cmpBtn" class="hbtn" aria-pressed="false" title="Show a second build underneath"><span data-ic="columns"></span>Compare</button>
+    <div class="seg" role="group" aria-label="Finish">
+      <button id="fnBlack" aria-pressed="true">Black</button><button id="fnWhite" aria-pressed="false">White</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <nav class="lib" aria-label="Apps">
+      <h2>App library</h2>
+      <div id="apps"></div>
+    </nav>
+
+    <main style="min-width:0">
+      <section class="stage" aria-label="Screens">
+        <div class="rowlabel" id="rowA" hidden></div>
+        <div class="devices" id="devices">
+          <div class="device" id="barDev"><div class="bezel"><canvas id="barCv" width="616" height="154"></canvas></div><div class="dlabel" id="barLbl"><b>ARXI Bar</b> · 44×11</div></div>
+          <div class="device" id="panDev"><div class="bezel"><canvas id="panCv" width="448" height="224"></canvas></div><div class="dlabel" id="panLbl"><b>ARXI Panel</b> · 44×22</div></div>
+        </div>
+        <div class="rowlabel" id="rowB" hidden></div>
+        <div class="devices" id="devicesB" hidden>
+          <div class="device" id="barDevB"><div class="bezel"><canvas id="barCvB" width="616" height="154"></canvas></div></div>
+          <div class="device" id="panDevB"><div class="bezel"><canvas id="panCvB" width="448" height="224"></canvas></div></div>
+        </div>
+        <div class="now" id="now"></div>
+        <div class="transport">
+          <button id="play" aria-label="Pause" data-ic="pause"></button>
+          <button id="stepB" aria-label="Back one frame" title="Back one frame" data-ic="back"></button>
+          <button id="stepF" aria-label="Forward one frame" title="Forward one frame" data-ic="fwd"></button>
+          <select id="speed" aria-label="Speed"><option value="0.25">¼×</option><option value="0.5">½×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select>
+          <input type="range" id="seek" min="0" max="30000" step="33" value="0" aria-label="Situation time">
+          <span class="clock" id="clock">0.0 s</span>
+          <button id="restart" title="Restart situation" aria-label="Restart situation" data-ic="restart"></button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="tabs" role="tablist">
+          <button role="tab" id="tSit" aria-selected="true" data-ic="film">Situation</button>
+          <button role="tab" id="tCtl" aria-selected="false" data-ic="sliders">Environment</button>
+          <button role="tab" id="tIns" aria-selected="false" data-ic="search">Inspect</button>
+          <button role="tab" id="tSheet" aria-selected="false" data-ic="grid">Contact sheet</button>
+          <button role="tab" id="tFit" aria-selected="false" data-ic="type">Words &amp; icons</button>
+          <button role="tab" id="tModel" aria-selected="false" data-ic="box">Model builder</button>
+          <button role="tab" id="tBuild" aria-selected="false" data-ic="flask">Lab</button>
+        </div>
+        <div class="pane" id="pSit"></div>
+        <div class="pane" id="pCtl" hidden></div>
+        <div class="pane" id="pIns" hidden></div>
+        <div class="pane" id="pSheet" hidden></div>
+        <div class="pane" id="pFit" hidden></div>
+        <div class="pane" id="pModel" hidden></div>
+        <div class="pane" id="pBuild" hidden></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- Shared simulator: changes here affect every section -->
+<script src="../shared/firmware.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/icons.js"></script>
+<script src="../shared/eel.js"></script>
+<script src="../shared/apps.js"></script>
+<script src="../shared/lab.js"></script>
+<script src="../shared/scene3d.js"></script>
+<script src="../shared/place.js"></script>
+<script src="../shared/tiers.js"></script>
+<script src="../shared/wizard.js"></script>
+<script src="../shared/segment.js"></script>
+<!-- Home only: add features for this section in home/features.js -->
+<script src="features.js"></script>
+<!-- Boots the simulator (load last) -->
+<script src="../shared/ui.js"></script>
+</body>
+</html>
