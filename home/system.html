@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ARXI Home · My system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Silkscreen&display=swap">
+<link rel="stylesheet" href="../shared/arxi.css">
+<script>window.ARXI_SEGMENT = 'home';</script>
+<style>
+.kitbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px }
+#kit { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; min-width: 0; align-items: center }
+.kchip { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; background: var(--raised) }
+.kchip[data-type="prime"] { border-color: color-mix(in srgb, #ff1208 45%, var(--line)) }
+.kic { color: var(--accent); display: grid } .kbody { display: flex; flex-direction: column; line-height: 1.15 } .kbody small { color: var(--muted); font: 11px var(--mono) }
+.kchip select { font-size: 12.5px; padding: 3px 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface) }
+.kt { font: 11px var(--mono); color: var(--muted) }
+.kx { border: 0; background: none; font-size: 18px; line-height: 1; color: var(--muted); cursor: pointer; padding: 0 2px } .kx:hover { color: var(--fg) }
+.kadd { display: flex; gap: 6px }
+.kopts { display: flex; flex-direction: column; gap: 6px; justify-content: center; font-size: 13px; padding-left: 10px; border-left: 1px solid var(--line) }
+.kopts select { font-size: 12.5px; padding: 2px 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface) }
+#cost { font: 12px var(--mono); color: var(--muted) }
+#score { display: flex; align-items: center; gap: 8px; padding-left: 10px; border-left: 1px solid var(--line); cursor: help }
+#score span { display: flex; flex-direction: column; line-height: 1.1 } #score b { font: 24px var(--display) } #score small { color: var(--muted); font-size: 12px }
+.daybar { display: flex; gap: 10px; align-items: center; margin: 14px 0 10px; flex-wrap: wrap }
+#day { display: flex; gap: 4px; flex-wrap: wrap; flex: 1 }
+#day button { display: flex; flex-direction: column; align-items: flex-start; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 5px 9px; cursor: pointer; line-height: 1.15 }
+#day button small { font: 10.5px var(--mono); color: var(--muted) } #day button span { font-size: 13px }
+#day button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent) }
+.mprog { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin-bottom: 10px } #mbar { height: 100%; background: var(--accent); width: 0 }
+#mclock { font: 12px var(--mono); color: var(--muted) }
+#house { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 12px }
+.room { background: radial-gradient(120% 120% at 50% 0%, var(--wall), var(--wall-2)); border-radius: 14px; padding: 12px 14px 14px; color: #e6e9ed }
+.room.wide { grid-column: span 2 } @media (max-width: 900px) { .room.wide { grid-column: auto } }
+.room > header { display: flex; justify-content: space-between; align-items: baseline; padding: 0 0 10px }
+.room .who { font: 11px var(--mono); color: #8d96a3 }
+.rdevs { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; justify-content: center }
+.rdev { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0 }
+.rdev.dev-bar canvas { width: 330px; max-width: 100% } .rdev.dev-panel canvas { width: 230px; max-width: 100% }
+.rdev .bezel { padding: 7px }
+.primebox { border-radius: 8px; overflow: hidden; box-shadow: 0 14px 30px rgba(0,0,0,.5) } .primecv { display: block; width: 200px; height: auto }
+.rdev figcaption { text-align: center; font-size: 12px; line-height: 1.3; max-width: 330px } .rdev figcaption b { display: block; font-weight: 500 } .rdev figcaption span { color: #9aa3ae; font-size: 11.5px }
+.stabs { margin-top: 16px }
+.focus { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 4px }
+.fslider { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; font-size: 13px } .fslider small { font: 11px var(--mono); color: var(--muted); width: 44px }
+.fgroup { border: 1px solid var(--line); border-radius: 10px; margin-top: 8px; background: var(--surface) }
+.fgroup > summary { display: flex; justify-content: space-between; padding: 9px 12px; cursor: pointer; list-style: none } .fgroup > summary small { color: var(--muted) }
+.ftable { display: flex; flex-direction: column; border-top: 1px solid var(--line) }
+.frow { display: grid; grid-template-columns: minmax(180px, 2fr) minmax(130px, 1.2fr) minmax(110px, 1.2fr) 150px; gap: 10px; align-items: center; padding: 7px 12px; border-bottom: 1px solid var(--line) }
+.frow:last-child { border-bottom: 0 } .frow b { font-weight: 500; display: block } .frow small { color: var(--muted); font-size: 12px }
+.frow select { font-size: 12.5px; padding: 3px; border: 1px solid var(--line); border-radius: 6px; background: var(--raised) }
+.fit { display: flex; flex-direction: column; font: 11px var(--mono); color: var(--muted) } .where { font-size: 12.5px } .where.warn { color: var(--warn) }
+@media (max-width: 760px) { .frow { grid-template-columns: 1fr 1fr } }
+.plook { display: flex; flex-wrap: wrap; gap: 14px; padding: 10px 12px; border-top: 1px solid var(--line); font-size: 13px; align-items: center }
+.parts { display: flex; flex-direction: column; gap: 8px }
+.part { display: grid; grid-template-columns: minmax(180px, 1fr) 2fr 48px; gap: 10px; align-items: center } .part small { display: block; color: var(--muted); font-size: 12px }
+.pbar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden } .pbar i { display: block; height: 100%; background: var(--accent) }
+.part > span { font: 12px var(--mono); text-align: right }
+.sugg { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); margin-top: 6px; background: var(--surface); font-size: 13.5px }
+.sugg.warn { border-color: color-mix(in srgb, var(--warn) 55%, var(--line)) } .sugg .btn { white-space: nowrap }
+#loading { padding: 40px; text-align: center; color: var(--muted) }
+.navsys { text-decoration: none }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark"><span id="eelMark"></span>ARXI<small>my system</small><small class="tagline">light from current</small></div>
+    <span class="spacer"></span>
+    <label class="hsel" for="preset"><span data-ic="layers">Start from</span><select id="preset"><option value="">A kit…</option><option>Bar Lite</option><option>Bar + Prime</option><option>Bar + Panel + Prime</option><option>Whole home</option></select></label>
+    <a class="hbtn navsys" href="./"><span data-ic="film"></span>Single-app simulator</a>
+  </header>
+
+  <section class="kitbar" aria-label="Your kit">
+    <div id="kit"></div>
+    <div class="kopts">
+      <label><input type="checkbox" id="hubTog"> ARXI Hub</label>
+      <label>Speakers <select id="spk"><option value="sonos">Sonos</option><option value="heos">Denon HEOS</option><option value="none">None</option></select></label>
+      <span id="cost"></span>
+    </div>
+    <div id="score" aria-live="polite"></div>
+  </section>
+
+  <div class="daybar">
+    <div id="day" role="group" aria-label="A day at home"></div>
+    <button class="hbtn" id="playDay"></button>
+  </div>
+  <div class="mprog"><div id="mbar"></div></div>
+  <p id="mclock" style="margin:0 0 8px"></p>
+
+  <div id="loading">Starting the firmware…</div>
+  <div id="house" aria-label="Your home, live"></div>
+
+  <section class="panel stabs">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-t="plan" data-ic="sliders">Plan</button>
+      <button role="tab" data-t="balance" data-ic="columns">Balance</button>
+      <button role="tab" data-t="link" data-ic="radio">ARXI link</button>
+      <button role="tab" data-t="export" data-ic="box">Export</button>
+    </div>
+    <div class="pane" id="tabPane"></div>
+  </section>
+</div>
+
+<script src="../shared/firmware.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/icons.js"></script>
+<script src="../shared/eel.js"></script>
+<script src="../shared/apps.js"></script>
+<script src="../shared/lab.js"></script>
+<script src="../shared/place.js"></script>
+<script src="../shared/tiers.js"></script>
+<script src="../shared/wizard.js"></script>
+<script src="../shared/segment.js"></script>
+<script src="../shared/kit.js"></script>
+<script src="features.js"></script>
+<!-- Home only: Prime and the system planner -->
+<script src="prime.js"></script>
+<script src="system.js"></script>
+</body>
+</html>
